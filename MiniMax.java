@@ -5,7 +5,7 @@ class MiniMax{
       return 1;
     }
 
-    public int fork(int[][] board, int depth){
+    public int max(int[][] board, int depth){
         if(depth = 0){
           return eval(board);
         }
@@ -13,12 +13,23 @@ class MiniMax{
           int[][][] moves = board.getMoves();
           int[] values = new int[board];
           for(int i = 0; i < moves.length;i++){
-            values[i]=fork(board.apply(moves[i]), depth-1);
+            values[i]=min(board.apply(moves[i]), depth-1);
           }
-          if(depth%2==0){ return max values;
+          return max(values);
+        }
+    }
+        
+    public int min(int[][] board, int depth){
+        if(depth = 0){
+          return eval(board);
+        }
+        else{
+          int[][][] moves = board.getMoves();
+          int[] values = new int[board];
+          for(int i = 0; i < moves.length;i++){
+            values[i]=max(board.apply(moves[i]), depth-1);
           }
-          else{ return min(values);
-          }
+          return min(values);
         }
     }
 }
