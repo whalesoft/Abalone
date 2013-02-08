@@ -1,8 +1,24 @@
 package Abalone;
 
 class MiniMax{
+    
+    final int[] weight = {}
+    
+    
+    
+    
+    
+    
     public int eval(int[][] board){
-      return 1;
+      int result = 0;
+      result += weight[0]*gameResult(board);
+      result += weight[1]*marbles(board);
+      result += weight[2]*centreDistance(board);
+      result += weight[3]*myGrouping(board);
+      result += weight[4]*enemyGrouping(board);
+      result += weight[5]*gameResult(board);
+      result += weight[6]*gameResult(board);
+      return result;
     }
 
     public int max(int[][] board, int depth){
@@ -32,4 +48,29 @@ class MiniMax{
           return min(values);
         }
     }
+    
+    public int gameResult(int[][] board){
+        return 1;
+    }
+    public int marbles(int[][] board){
+        return 1;
+    }
+    public int centreDistance(int[][] board){
+        return 1;
+    }
+    public int myGrouping(int[][] board){
+        return 1;
+    }
+    public int enemyGrouping(int[][] board){
+        return 1;
+    }
+    public int myAttack(int[][] board){
+        return 1;
+    }
+    public int enemyAttack(int[][] board){
+        return 1;
+    }
+    
+    
+    
 }
