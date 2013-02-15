@@ -2,13 +2,8 @@ package Abalone;
 
 class MiniMax{
     
-    final int[] weight = {}
-    
-    
-    
-    
-    
-    
+    final int[] weight = {1,1,1,1,1,1,1};
+        
     public int eval(int[][] board){
       int result = 0;
       result += weight[0]*gameResult(board);
@@ -69,8 +64,5 @@ class MiniMax{
     }
     public int enemyAttack(int[][] board){
         return 1;
-    }
-    
-    
-    
+    }    
 }
