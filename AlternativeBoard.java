@@ -4,15 +4,16 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 
-public class AlternativeBoard {
+public class Board {
     // Just some constants
     final int INVALID = -1;
     final int FREE = 0;
     final int WHITE = 1;
     final int BLACK = 2;
-    final int[][] dir = {{-1,-1},{-1,0},{0,-1},{0,1},{1,1},{1,0}}; 
+    final int[][] dir = {{-1,-1},{-1,0},{0,-1},{0,1},{1,1},{1,0}};
+    final int[][] orientations = {{1,0},{1,1},{0,1}}; 
     final int[][] def = {
-      {2,2,2,2,2,-1,-1,-1,-1},
+	    {2,2,2,2,2,-1,-1,-1,-1},
 	    {2,2,2,2,2,2,-1,-1,-1},
 	    {0,0,2,2,2,0,0,-1,-1},
 	    {0,0,0,0,0,0,0,0,-1},
@@ -25,7 +26,7 @@ public class AlternativeBoard {
     int cplayer;	// the current playes
     int[] selected;	// the current selection of marbles
     int[][] board;	// the current board positions
-    
+
     // Main responsible for calling the appropriate Methods
     public static void main(String[] args){
 	Board b = new Board();
@@ -33,7 +34,7 @@ public class AlternativeBoard {
 	    b.print();
 	    int [] m = readMove();
 	    int[] d = {m[2],m[3]};
-	    if( b.isPossibleMove(m[0], m[1], m[2], m[3], b.getCPlayer())){
+	    if( b.isPossibleMove(m, b.getCPlayer())){
 		b.move(m);
 		b.setCPlayer(3 - b.getCPlayer());
 	    }
@@ -42,14 +43,41 @@ public class AlternativeBoard {
 	    }
 	}
     }
+    private boolean isPossibleMove(int[] m, int cPlayer) {
+	if(m.length == 4){
+	    System.out.println("Line Attempt");
+	    return isPossibleLineMove(m[0], m[1], m[2], m[3], cPlayer);
+	}
+	if(m.length == 7){
+	    System.out.println("broad attempt");
+	    return isPossibleBroadMove(m[0], m[1], m[2], m[3], m[4], m[5], m[6], cPlayer);
+	}
+	return false;
+    }
     private static int[] readMove() {
-	int[] ret = new int[4];
+
 	Scanner input = new Scanner(System.in);
-	ret[0] = input.nextInt();
-	ret[1] = input.nextInt();
-	ret[2] = input.nextInt();
-	ret[3] = input.nextInt();
 	
+	int[] ret = null ;
+	do{
+	    String c = input.next();
+	    if(c.equals("l")){
+		ret = new int[4];
+		ret[0] = input.nextInt();
+		ret[1] = input.nextInt();
+		ret[2] = input.nextInt();
+		ret[3] = input.nextInt();
+	    }
+	    else if(c.equals("b")){
+		ret = new int[7];
+		ret[0] = input.nextInt();
+		ret[1] = input.nextInt();
+		ret[2] = input.nextInt();
+		ret[3] = input.nextInt();
+		ret[4] = input.nextInt();
+		ret[5] = input.nextInt();
+		ret[6] = input.nextInt();}
+	} while(ret == null);
 	return ret;
     }
     // Initialisation of default Board
@@ -65,12 +93,12 @@ public class AlternativeBoard {
     public int[][] getBoard(){
 	return this.board;
     }
-    
+
     // Set a single field to value v
     public void setField(int x,int y, int v){
 	try {
 	    if(this.getField(x, y) != INVALID){
-	    this.board[y][x] = v;}
+		this.board[y][x] = v;}
 	} catch (Exception e) {
 	}
     }
@@ -88,7 +116,7 @@ public class AlternativeBoard {
     public void setCPlayer(int p){
 	this.cplayer = p;
     }
-    
+
     // Print the whole board
     public void print(){
 	System.out.println(this.getCPlayer());
@@ -125,20 +153,37 @@ public class AlternativeBoard {
 	ArrayList<int[]> moves = new ArrayList<int[]>();
 	for(int[] marble : getMarbles(player)){			// For every marble of the player
 	    for(int[] d : dir){
-		int f1 = this.getField(marble[0] + d[0], marble[1] + d[1]);
-		if(f1 == player){
-		    
+		for(int[] or: orientations){
+
+		    if(isPossibleBroadMove(marble[0], marble[1], or[0], or[1], d[0], d[1] , 2, player)){
+			int[] move = {marble[0], marble[1], or[0], or[1], d[0], d[1], 2};
+			moves.add(move);
+		    }
+		    if(isPossibleBroadMove(marble[0], marble[1], or[0], or[1], d[0], d[1] , 3, player)){
+			int[] move = {marble[0], marble[1], or[0], or[1], d[0], d[1], 3};
+			moves.add(move);
+		    }
 		}
 	    }
 	}
 	return moves;
+    }
+    private boolean isPossibleBroadMove(int x, int y, int ox, int oy, int dx, int dy, int length, int p) {
+	for(int i = 0; i< length;i++){
+	    int f = this.getField(x + i*ox, y + i*oy);
+	    int off = this.getField(x + i*ox + dx, y + i*oy + dy);
+	    if(f != p || off != FREE){
+		return false;
+	    }
+	}
+	return true;
     }
     // Get the possile moves along a line
     private ArrayList<int[]> getLineMoves(int player) {
 	ArrayList<int[]> moves = new ArrayList<int[]>();	// List accumulating all the moves
 	for(int[] marble : getMarbles(player)){			// For every marble of the player
 	    for(int[] d : dir){					// ...check every off the possible directions
-		if(isPossibleMove(marble[0], marble[1],d[0],d[1], player)){
+		if(isPossibleLineMove(marble[0], marble[1],d[0],d[1], player)){
 		    int[] move = {marble[0], marble[1],  d[0], d[1]};
 		    moves.add(move);
 		}
@@ -146,7 +191,7 @@ public class AlternativeBoard {
 	}
 	return moves;
     }
-    private boolean isPossibleMove(int x, int y, int dx, int dy, int p) {
+    private boolean isPossibleLineMove(int x, int y, int dx, int dy, int p) {
 	if(this.getField(x, y) != p){return false;}
 	int[] d = {dx, dy};
 	if(!isDir(d)){return false;}
@@ -171,7 +216,7 @@ public class AlternativeBoard {
 	    }
 	    else{
 		// ############### THREE IN A ROW ###############
-		
+
 		int f3 = this.getField(x + 3*dx, y + 3*dy);
 		int f4 = this.getField(x + 4*dx, y + 4*dy);
 		int f5 = this.getField(x + 5*dx, y + 5*dy);
@@ -220,7 +265,10 @@ public class AlternativeBoard {
 	    } while (tmp!=0);
 	}
 	else{						// broadside move
-
+	    for(int i = 0; i< m[6];i++){
+		this.setField(m[0] + i*m[2], m[1] + i*m[3], FREE);
+		this.setField(m[0] + i*m[2] + m[4], m[1] + i*m[3] + m[5], this.getCPlayer());
+	    }
 	}
 	return c;
     }
@@ -232,6 +280,16 @@ public class AlternativeBoard {
 	    rev[1] = m[1] + l * m[3];
 	    rev[2] = -m[2];
 	    rev[3] = -m[3];
+	}
+	else{
+	    rev[0] = m[0] + l * m[2];
+	    rev[1] = m[1] + l * m[3];
+	    rev[2] = -m[2];
+	    rev[3] = -m[3];
+	    rev[4] = m[0] + l * m[2];
+	    rev[5] = m[1] + l * m[3];
+	    rev[6] = -m[2];
+
 	}
 	return rev;
     }
