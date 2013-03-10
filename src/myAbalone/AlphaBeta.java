@@ -1,5 +1,3 @@
-package Abalone;
-
 class AlpheBeta{
     int maxdepth;
     
