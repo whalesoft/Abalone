@@ -1,9 +1,6 @@
-
-
-
 import java.awt.*;
 import javax.swing.*;
-import java.awt.event.*;
+//import java.awt.event.*;
 
 public class DrawBoard extends JPanel
 {
@@ -74,16 +71,4 @@ public class DrawBoard extends JPanel
 		}
 	}
 	
-	public static void main ( String [ ] args )
-	{
-		JFrame frame = new JFrame ( );
-		frame.setTitle ( "Abalone" );
-		frame.setSize ( 900, 900 );
-		Container contentPane = frame.getContentPane ( );
-		Board board = new Board ( 9, 9 );
-		board.set ( 5, 5, -1 );
-		contentPane.add ( new DrawBoard ( board ) );
-		frame.show ( );
-		frame.setDefaultCloseOperation ( JFrame.EXIT_ON_CLOSE );
-	}
 }
