@@ -14,11 +14,13 @@ import javax.swing.*;
  * @author Acer
  * 
  */
-public class BoardFrame extends JFrame implements MouseListener, Marble
+public class BoardFrame extends JFrame implements MouseListener
 {
 	
 	JPanel	BoardPanel;
 	Board		board;
+	WhiteMarbles white;
+	BlackMarbles black;
 	
 	BoardFrame ( )
 	{
@@ -29,10 +31,14 @@ public class BoardFrame extends JFrame implements MouseListener, Marble
 		
 		board = new Board ( 9, 9 );
 		board.set ( 5, 5, -1 );
+		
+		white = new WhiteMarbles ( 9, 9 );
+		black = new BlackMarbles ( 9, 9 );
+		
 		JPanel BoardPanel = new DrawBoard ( board );
 		add ( BoardPanel );
-		setVisible ( true );
 		BoardPanel.addMouseListener ( this );
+		setVisible ( true );
 		
 	}
 	
@@ -43,7 +49,7 @@ public class BoardFrame extends JFrame implements MouseListener, Marble
 		float j = ( e.getY ( ) - 40 - 45 * i ) / 84;
 		if ( i >= 0 && i <= 4 && j >= 0 && i + j < 9 ) // if valid
 		{
-			select ( (int) i, (int) j );
+			white.select ( (int) i, (int) j );
 			return;
 		}
 		j = ( 310 - e.getX ( ) ) / 80;
